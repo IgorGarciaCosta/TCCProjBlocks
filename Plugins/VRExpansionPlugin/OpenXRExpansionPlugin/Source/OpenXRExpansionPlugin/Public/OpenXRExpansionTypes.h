@@ -93,6 +93,12 @@ public:
 	UPROPERTY(BlueprintReadOnly, NotReplicated, Transient, Category = Default)
 		TArray<FTransform> SkeletalTransforms;
 
+	UPROPERTY(BlueprintReadOnly, NotReplicated, Transient, Category = Default)
+		bool bHasFingerCurls;
+
+	UPROPERTY(BlueprintReadOnly, NotReplicated, Transient, Category = Default)
+		TArray<float> FingerCurls;
+
 	// If true we will assume that the target skeleton does not have the metacarpal bones and we will not replicate them
 	UPROPERTY(EditAnywhere, NotReplicated, BlueprintReadWrite, Category = Default)
 		bool bEnableUE4HandRepSavings;
@@ -117,6 +123,7 @@ public:
 		WorldScaleOverride = 0.0f;
 		bAllowDeformingMesh = true;
 		bMirrorLeftRight = false;
+		bHasFingerCurls = false;
 		bEnableUE4HandRepSavings = true;
 		TargetHand = EVRSkeletalHandIndex::EActionHandIndex_Right;
 		bHasValidData = false;

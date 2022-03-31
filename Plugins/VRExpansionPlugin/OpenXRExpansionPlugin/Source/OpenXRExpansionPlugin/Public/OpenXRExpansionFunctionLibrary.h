@@ -61,7 +61,7 @@ public:
 	}
 
 	UFUNCTION(BlueprintCallable, Category = "VRExpansionFunctions|OpenXR", meta = (bIgnoreSelf = "true"))
-		static bool GetOpenXRHandPose(FBPOpenXRActionSkeletalData& HandPoseContainer, UOpenXRHandPoseComponent* HandPoseComponent, bool bGetMockUpPose = false)
+		static bool GetOpenXRHandPose(FBPOpenXRActionSkeletalData& HandPoseContainer, UOpenXRHandPoseComponent* HandPoseComponent, bool bGetFingerCurls = false, bool bGetMockUpPose = false)
 	{
 		FXRMotionControllerData MotionControllerData;
 
@@ -83,12 +83,79 @@ public:
 				HandPoseContainer.SkeletalTransforms.Add(FTransform(MotionControllerData.HandKeyRotations[i].GetNormalized(), MotionControllerData.HandKeyPositions[i], FVector(1.f)).GetRelativeTransform(ParentTrans));
 			}
 
+			if (bGetFingerCurls)
+			{
+				TArray<FTransform> ParentSpaceTransforms;
+				ConvertHandTransformsSpaceAndBack(ParentSpaceTransforms, HandPoseContainer.SkeletalTransforms);
+
+				if (HandPoseContainer.FingerCurls.Num() < 5)
+				{
+					HandPoseContainer.FingerCurls.AddUninitialized(5);
+				}
+
+				// Thumb
+				float DistAngle = FMath::Abs(ParentSpaceTransforms[(int32)EXRHandJointType::OXR_HAND_JOINT_THUMB_DISTAL_EXT].Rotator().Yaw);
+				float IntermediateAngle = FMath::Abs(ParentSpaceTransforms[(int32)EXRHandJointType::OXR_HAND_JOINT_THUMB_PROXIMAL_EXT].Rotator().Yaw);
+				float ProxAngle = FMath::Abs(ParentSpaceTransforms[(int32)EXRHandJointType::OXR_HAND_JOINT_THUMB_METACARPAL_EXT].Rotator().Yaw);
+				HandPoseContainer.FingerCurls[0] = CalculateFingerCurls(16.0f, 95.0f, DistAngle, IntermediateAngle, ProxAngle);
+
+				// Pointer
+				DistAngle = FMath::Abs(ParentSpaceTransforms[(int32)EXRHandJointType::OXR_HAND_JOINT_INDEX_DISTAL_EXT].Rotator().Yaw);
+				IntermediateAngle = FMath::Abs(ParentSpaceTransforms[(int32)EXRHandJointType::OXR_HAND_JOINT_INDEX_INTERMEDIATE_EXT].Rotator().Yaw);
+				ProxAngle = FMath::Abs(ParentSpaceTransforms[(int32)EXRHandJointType::OXR_HAND_JOINT_INDEX_PROXIMAL_EXT].Rotator().Yaw);
+				HandPoseContainer.FingerCurls[1] = CalculateFingerCurls(45.0f, 110.0f, DistAngle, IntermediateAngle, ProxAngle);
+
+				// Middle
+				DistAngle = FMath::Abs(ParentSpaceTransforms[(int32)EXRHandJointType::OXR_HAND_JOINT_MIDDLE_DISTAL_EXT].Rotator().Yaw);
+				IntermediateAngle = FMath::Abs(ParentSpaceTransforms[(int32)EXRHandJointType::OXR_HAND_JOINT_MIDDLE_INTERMEDIATE_EXT].Rotator().Yaw);
+				ProxAngle = FMath::Abs(ParentSpaceTransforms[(int32)EXRHandJointType::OXR_HAND_JOINT_MIDDLE_PROXIMAL_EXT].Rotator().Yaw);
+				HandPoseContainer.FingerCurls[2] = CalculateFingerCurls(45.0f, 110.0f, DistAngle, IntermediateAngle, ProxAngle);
+
+				// Ring
+				DistAngle = FMath::Abs(ParentSpaceTransforms[(int32)EXRHandJointType::OXR_HAND_JOINT_RING_DISTAL_EXT].Rotator().Yaw);
+				IntermediateAngle = FMath::Abs(ParentSpaceTransforms[(int32)EXRHandJointType::OXR_HAND_JOINT_RING_INTERMEDIATE_EXT].Rotator().Yaw);
+				ProxAngle = FMath::Abs(ParentSpaceTransforms[(int32)EXRHandJointType::OXR_HAND_JOINT_RING_PROXIMAL_EXT].Rotator().Yaw);
+				HandPoseContainer.FingerCurls[3] = CalculateFingerCurls(45.0f, 110.0f, DistAngle, IntermediateAngle, ProxAngle);
+
+				// Little
+				DistAngle = FMath::Abs(ParentSpaceTransforms[(int32)EXRHandJointType::OXR_HAND_JOINT_LITTLE_DISTAL_EXT].Rotator().Yaw);
+				IntermediateAngle = FMath::Abs(ParentSpaceTransforms[(int32)EXRHandJointType::OXR_HAND_JOINT_LITTLE_INTERMEDIATE_EXT].Rotator().Yaw);
+				ProxAngle = FMath::Abs(ParentSpaceTransforms[(int32)EXRHandJointType::OXR_HAND_JOINT_LITTLE_PROXIMAL_EXT].Rotator().Yaw);
+				HandPoseContainer.FingerCurls[4] = CalculateFingerCurls(55.0f, 110.0f, DistAngle, IntermediateAngle, ProxAngle);
+
+				HandPoseContainer.bHasFingerCurls = true;
+			}
+
 			HandPoseContainer.bHasValidData = true;
 			return true;
 		}
 
 		HandPoseContainer.bHasValidData = false;
 		return false;
+	}
+
+	inline static float CalculateFingerCurls(float RangeMin, float RangeMax, float DistAngle, float IntermediateAngle, float ProxAngle)
+	{
+		//DistAngle = DistAngle < 0.0f ? 0.0f : DistAngle;
+		//IntermediateAngle = IntermediateAngle < 0.0f ? 0.0f : FMath::Abs(IntermediateAngle);
+		//ProxAngle = ProxAngle > 0.0f ? 0.0f : FMath::Abs(ProxAngle);
+
+		float totalCurl = ((DistAngle + IntermediateAngle + ProxAngle) / 3.0f);
+
+		if (totalCurl <= RangeMin)
+		{
+			totalCurl = 0.0f;
+		}
+		else if (totalCurl >= RangeMax)
+		{
+			totalCurl = 1.0f;
+		}
+		else
+		{
+			totalCurl = FMath::RoundToFloat((totalCurl - RangeMin) / (RangeMax - RangeMin) * 100) / 100;
+		}
+
+		return totalCurl;
 	}
 
 	//UFUNCTION(BlueprintCallable, Category = "VRExpansionFunctions|OpenXR", meta = (bIgnoreSelf = "true"))

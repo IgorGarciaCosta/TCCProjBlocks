@@ -207,6 +207,9 @@ public:
 	virtual void BeginPlay() override;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SkeletalData|Actions")
+		bool bGetFingerCurls;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SkeletalData|Actions")
 		bool bGetMockUpPoseForDebugging;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SkeletalData|Actions")

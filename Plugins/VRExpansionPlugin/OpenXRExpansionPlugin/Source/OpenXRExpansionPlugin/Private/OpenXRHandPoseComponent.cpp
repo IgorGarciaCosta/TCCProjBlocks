@@ -19,6 +19,7 @@ UOpenXRHandPoseComponent::UOpenXRHandPoseComponent(const FObjectInitializer& Obj
 	SkeletalNetUpdateCount = 0.f;
 	bDetectGestures = true;
 	SetIsReplicatedByDefault(true);
+	bGetFingerCurls = false;
 	bGetMockUpPoseForDebugging = false;
 }
 
@@ -160,7 +161,7 @@ void UOpenXRHandPoseComponent::TickComponent(float DeltaTime, enum ELevelTick Ti
 
 		for (FBPOpenXRActionSkeletalData& actionInfo : HandSkeletalActions)
 		{
-			if (UOpenXRExpansionFunctionLibrary::GetOpenXRHandPose(actionInfo, this, bGetMockUpPoseForDebugging))
+			if (UOpenXRExpansionFunctionLibrary::GetOpenXRHandPose(actionInfo, this, bGetFingerCurls, bGetMockUpPoseForDebugging))
 			{
 				if (bGetCompressedTransforms)
 				{
