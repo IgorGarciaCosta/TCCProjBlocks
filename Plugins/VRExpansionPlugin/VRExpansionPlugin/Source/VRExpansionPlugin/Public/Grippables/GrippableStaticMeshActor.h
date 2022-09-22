@@ -56,6 +56,14 @@ public:
 	virtual void BeginPlay() override;
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
+
+
+	//MY FUNCTION TO TRIGGER ACTIONSfROM BLOCKS
+	UFUNCTION(BlueprintImplementableEvent)
+		void TriggerBlockEvent();
+
+
+
 	UPROPERTY(Replicated, ReplicatedUsing = OnRep_AttachmentReplication)
 		FRepAttachmentWithWeld AttachmentWeldReplication;
 
