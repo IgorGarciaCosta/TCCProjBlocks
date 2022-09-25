@@ -29,7 +29,7 @@ void AGrippableBlock::MakeTrace()
 {
 	//UE_LOG(LogTemp, Warning, TEXT("Your message"));
 	FVector Start = GetActorLocation();
-	FVector End = Start + GetActorForwardVector() * TraceDistance;
+	FVector End = Start + GetActorUpVector() * TraceDistance;
 	DrawDebugLine(GetWorld(), Start, End, FColor::Red);
 	FHitResult HitResult;
 	bool HastHit = GetWorld()->LineTraceSingleByChannel(
@@ -52,16 +52,17 @@ void AGrippableBlock::MakeTrace()
 			}
 		}
 		else {
-			bTouchedTarget = false;
+			/*bTouchedTarget = false;
 			if (bTouchedPreviousState == true) {
 				bTouchedPreviousState = false;
-			}
+			}*/
 		}
 	}
 	else {
 		bTouchedTarget = false;
 		if (bTouchedPreviousState == true) {
 			bTouchedPreviousState = false;
+			TriggerSensorObjectOut();
 		}
 	}
 }
