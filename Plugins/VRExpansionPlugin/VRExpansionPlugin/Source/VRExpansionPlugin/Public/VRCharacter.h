@@ -50,4 +50,15 @@ public:
 			bool bUsePathfinding = true, bool bProjectDestinationToNavigation = true, bool bCanStrafe = false,
 			TSubclassOf<UNavigationQueryFilter> FilterClass = NULL, bool bAllowPartialPath = true) override;
 
+
+	UFUNCTION(BlueprintCallable)
+		void SaveGame();
+	UFUNCTION(BlueprintCallable)
+		void LoadGame();
+	UFUNCTION(BlueprintCallable)
+		void ResetSavedData();
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		int32 CurrentLvl = 1;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		FText PlayerName;
 };

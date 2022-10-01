@@ -3,6 +3,8 @@
 #include "VRCharacter.h"
 #include "NavigationSystem.h"
 #include "VRPathFollowingComponent.h"
+#include "MySaveGame.h"
+#include "Kismet/GameplayStatics.h"
 //#include "Runtime/Engine/Private/EnginePrivate.h"
 
 DEFINE_LOG_CATEGORY(LogVRCharacter);
@@ -172,6 +174,45 @@ void AVRCharacter::ExtendedSimpleMoveToLocation(const FVector& GoalLocation, flo
 			}
 		}
 	}
+}
+
+void AVRCharacter::SaveGame()
+{
+	UMySaveGame* SaveGameInstance = Cast<UMySaveGame>(UGameplayStatics::CreateSaveGameObject(UMySaveGame::StaticClass()));
+	SaveGameInstance->CurrentLevel = CurrentLvl;
+	SaveGameInstance->UserName = PlayerName;
+
+	//save gameinstance
+	UGameplayStatics::SaveGameToSlot(SaveGameInstance, TEXT("MySlot"), 0);
+	
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, TEXT("GAME SAVED"));
+
+}
+
+void AVRCharacter::LoadGame()
+{
+	UMySaveGame* SaveGameInstance = Cast<UMySaveGame>(UGameplayStatics::CreateSaveGameObject(UMySaveGame::StaticClass()));
+	
+	//load saved game into gameinstance
+	SaveGameInstance = Cast<UMySaveGame>(UGameplayStatics::LoadGameFromSlot("MySlot", 0));
+
+	CurrentLvl = SaveGameInstance->CurrentLevel;
+	PlayerName = SaveGameInstance->UserName;
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, TEXT("GAME LOADED"));
+}
+
+void AVRCharacter::ResetSavedData()
+{
+	UMySaveGame* SaveGameInstance = Cast<UMySaveGame>(UGameplayStatics::CreateSaveGameObject(UMySaveGame::StaticClass()));
+
+	//load saved game into gameinstance
+	SaveGameInstance = Cast<UMySaveGame>(UGameplayStatics::LoadGameFromSlot("MySlot", 0));
+
+	SaveGameInstance->CurrentLevel = 1;
+	SaveGameInstance->UserName = FText::FromString(TEXT(""));;
+
+	CurrentLvl = 1;
+	PlayerName = FText::FromString(TEXT(""));
 }
 
 void AVRCharacter::RegenerateOffsetComponentToWorld(bool bUpdateBounds, bool bCalculatePureYaw)
