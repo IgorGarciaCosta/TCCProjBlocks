@@ -196,9 +196,13 @@ void AVRCharacter::LoadGame()
 	//load saved game into gameinstance
 	SaveGameInstance = Cast<UMySaveGame>(UGameplayStatics::LoadGameFromSlot("MySlot", 0));
 
-	CurrentLvl = SaveGameInstance->CurrentLevel;
-	PlayerName = SaveGameInstance->UserName;
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, TEXT("GAME LOADED"));
+	if (SaveGameInstance!=nullptr) {
+		CurrentLvl = SaveGameInstance->CurrentLevel;
+		PlayerName = SaveGameInstance->UserName;
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, TEXT("GAME LOADED"));
+	}
+	else GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, TEXT("NOT LOADED"));
+	
 }
 
 void AVRCharacter::ResetSavedData()
