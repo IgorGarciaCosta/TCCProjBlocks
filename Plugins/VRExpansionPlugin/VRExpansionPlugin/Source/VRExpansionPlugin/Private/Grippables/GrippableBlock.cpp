@@ -15,6 +15,8 @@ AGrippableBlock::AGrippableBlock(const FObjectInitializer& ObjectInitializer) : 
 void AGrippableBlock::BeginPlay()
 {
 	Super::BeginPlay();
+	StartLocation = GetActorLocation();
+	StartRotation = GetActorRotation();
 }
 
 void AGrippableBlock::Tick(float DeltaTime)

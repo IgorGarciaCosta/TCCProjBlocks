@@ -23,6 +23,11 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+		FVector StartLocation;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+		FRotator StartRotation;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 		float TraceDistance = 30.f;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 		FString ActorNameOpt1 = "SkeletalMeshComponent0";
