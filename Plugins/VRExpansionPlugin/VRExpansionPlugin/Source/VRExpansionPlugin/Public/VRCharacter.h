@@ -54,6 +54,11 @@ public:
 	UFUNCTION(BlueprintCallable)
 		void SaveGame();
 	UFUNCTION(BlueprintCallable)
+		void TeleportToPoint();
+	UFUNCTION(BlueprintImplementableEvent)
+		void TeleportWithFade(ATeleportPointActor* teleportPointRef);
+
+	UFUNCTION(BlueprintCallable)
 		void LoadGame();
 	UFUNCTION(BlueprintCallable)
 		void ResetSavedData();
@@ -61,4 +66,6 @@ public:
 		int32 CurrentLvl = 1;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		FText PlayerName;
+
+	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)override;
 };

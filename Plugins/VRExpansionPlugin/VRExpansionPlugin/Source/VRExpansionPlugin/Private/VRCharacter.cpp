@@ -5,6 +5,7 @@
 #include "VRPathFollowingComponent.h"
 #include "MySaveGame.h"
 #include "Kismet/GameplayStatics.h"
+#include "TeleportPointActor.h"
 //#include "Runtime/Engine/Private/EnginePrivate.h"
 
 DEFINE_LOG_CATEGORY(LogVRCharacter);
@@ -189,6 +190,17 @@ void AVRCharacter::SaveGame()
 
 }
 
+void AVRCharacter::TeleportToPoint()
+{
+	TArray<AActor*> FoundActors;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ATeleportPointActor::StaticClass(), FoundActors);
+
+	if (IsValid(FoundActors[0])) {
+		TeleportWithFade(Cast<ATeleportPointActor>(FoundActors[0]));
+	}
+
+}
+
 void AVRCharacter::LoadGame()
 {
 	UMySaveGame* SaveGameInstance = Cast<UMySaveGame>(UGameplayStatics::CreateSaveGameObject(UMySaveGame::StaticClass()));
@@ -217,6 +229,12 @@ void AVRCharacter::ResetSavedData()
 
 	CurrentLvl = 1;
 	PlayerName = FText::FromString(TEXT(""));
+}
+
+void AVRCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+{
+	Super::SetupPlayerInputComponent(PlayerInputComponent);
+	PlayerInputComponent->BindAction("TeleportToPoint", IE_Pressed, this, &AVRCharacter::TeleportToPoint);
 }
 
 void AVRCharacter::RegenerateOffsetComponentToWorld(bool bUpdateBounds, bool bCalculatePureYaw)
