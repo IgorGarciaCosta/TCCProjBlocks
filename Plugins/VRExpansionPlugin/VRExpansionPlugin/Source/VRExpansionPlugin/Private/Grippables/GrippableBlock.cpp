@@ -32,7 +32,7 @@ void AGrippableBlock::MakeTrace()
 	//UE_LOG(LogTemp, Warning, TEXT("Your message"));
 	FVector Start = GetActorLocation();
 	FVector End = Start + GetActorUpVector() * TraceDistance;
-	DrawDebugLine(GetWorld(), Start, End, FColor::Red);
+	//DrawDebugLine(GetWorld(), Start, End, FColor::Red);
 	FHitResult HitResult;
 	bool HastHit = GetWorld()->LineTraceSingleByChannel(
 		HitResult,

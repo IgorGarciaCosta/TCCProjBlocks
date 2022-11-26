@@ -28,7 +28,7 @@ public:
 		FRotator StartRotation;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-		float TraceDistance = 30.f;
+		float TraceDistance = 40.f;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 		FString ActorNameOpt1 = "SkeletalMeshComponent0";
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)

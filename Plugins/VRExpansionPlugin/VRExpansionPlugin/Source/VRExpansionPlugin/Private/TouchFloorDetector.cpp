@@ -3,7 +3,6 @@
 
 #include "TouchFloorDetector.h"
 #include "Components/BoxComponent.h"
-#include "Grippables/GrippableStaticMeshActor.h"
 #include "Grippables/GrippableBlock.h"
 
 // Sets default values
@@ -30,7 +29,7 @@ void ATouchFloorDetector::BeginPlay()
 
 void ATouchFloorDetector::FloorHit(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	AGrippableStaticMeshActor* Block = Cast<AGrippableStaticMeshActor>(OtherActor);
+	AGrippableBlock* Block = Cast<AGrippableBlock>(OtherActor);
 
 	// O IsValid() verifica se o objeto é != nullptr e se está pendente de destruição, é mais seguro de utilizar para UObjects
 	if (IsValid(Block)) {
