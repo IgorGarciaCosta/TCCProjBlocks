@@ -18,7 +18,7 @@ public:
 	UMySaveGame();
 
 	UPROPERTY(EditAnywhere)
-		int32 CurrentLevel = 1;
+		int32 CurrentLevel;
 	UPROPERTY(EditAnywhere)
 		FText UserName;
 };
